@@ -1,0 +1,78 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/src/generated/prisma
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+.cache/
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+prisma/migrations/
+
+# Logs
+logs
+*.log
+logs/*
+*.pid
+*.seed
+*.pid.lock
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+
+# Coverage and tests
+coverage/
+*.lcov
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+
+# TypeScript
+*.tsbuildinfo
+
+# Lock files (caso use apenas um gerenciador de pacotes, deixa os outros)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Misc
+*.bak
+*.orig
+
+# Frontend build
+frontend/.next/
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.cache/
+
+# Backend build
+backend/node_modules/
+backend/dist/
+backend/.cache/
