@@ -16,8 +16,18 @@ generator client {
 model User {
   id           Int      @id @default(autoincrement())
   name         String   
-  email        String @unique
+  email        String   @unique
   orders       Order[]
+  createdAt    DateTime @default(now())
+}
+
+model FoodStall {
+  id           Int      @id @default(autoincrement())
+  name         String   
+  email        String   @unique
+  orders       Order[]     
+  products     Product[]
+  description  String?
   createdAt    DateTime @default(now())
 }
 
