@@ -36,8 +36,9 @@ model Product {
   name         String
   price        Float
   stallid      Int
-  stall        FoodStall @relation(fields: [stallid], references: [idS]) 
+  stall        FoodStall @relation(fields: [stallid], references: [id]) 
   createdAt    DateTime @default(now())
+  orders       Order[]
 }
 
 model Order {
@@ -46,9 +47,9 @@ model Order {
   status       String   @default("pending")
   createdAt    DateTime @default(now())
   user         User     @relation(fields: [userId], references: [id])
-  uderId       Int
+  userId       Int
   product      Product  @relation(fields: [productId], references: [id])
   productId    Int
-  stall        FoodStall    @relation(fields: [stallid], references: [id])
+  stall        FoodStall @relation(fields: [stallid], references: [id])
   stallid      Int
 }
