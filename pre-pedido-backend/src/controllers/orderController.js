@@ -45,3 +45,20 @@ export const getOrders = async (req, res) => {
     res.status(500).json({ error: "Erro ao buscar pedidos" });
   }
 };
+
+// Atualiza o Pedido
+export const updateOrder = async (req, res) =>{
+  try {
+    const {id} = req.params;
+    const {status, quantity} = req.body;
+
+    const updateOrder = await prisma.order.update({
+      where: {id: parseInt(id)},
+      data: {status, quantity},
+    });
+
+    res.json(updateOrder);
+  } catch(err) {
+    res.status(500).json({error: "Erro ao atualizar o pedido"});
+  }
+};
