@@ -94,3 +94,28 @@ export const getOrderHistory = async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar histórico de pedidos' });
   }
 };
+
+// Cancelar um pedido
+export const cancelOrder = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const order = await prisma.order.findUnique({ where: { id: Number(id) } })
+    if (!order) {
+      return res.status(404).json({ message: 'Pedido não encontrado' })
+    }
+
+    const canceledOrder = await prisma.order.update({
+      where: { id: Number(id) },
+      data: { status: 'cancelado' },
+    })
+
+    res.json({
+      message: 'Pedido cancelado com sucesso',
+      order: canceledOrder,
+    })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Erro ao cancelar pedido' })
+  }
+}
