@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getOrders, createOrder, updateOrder } from "../controllers/orderController.js";
+import { getOrders, createOrder, updateOrder, getOrderHistory } from "../controllers/orderController.js";
 
 const router = Router();
 
@@ -11,5 +11,7 @@ router.post("/", createOrder);
 
 // rota para atualizar pedido
 router.put("/:id", updateOrder);
+
+router.get('/history/:userId', getOrderHistory);
 
 export default router;

@@ -62,3 +62,35 @@ export const updateOrder = async (req, res) =>{
     res.status(500).json({error: "Erro ao atualizar o pedido"});
   }
 };
+
+// Histórico de pedidos por usuário
+export const getOrderHistory = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const orders = await prisma.order.findMany({
+      where: { userId: parseInt(userId) },
+      include: {
+        product: {
+          select: {
+            name: true,
+            price: true
+          }
+        },
+        stall: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    res.json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao buscar histórico de pedidos' });
+  }
+};
