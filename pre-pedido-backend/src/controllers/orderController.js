@@ -1,4 +1,5 @@
 import prisma from "../db.js";
+import { OrderStatus } from "../enums/OrderStatus";
 
 export const createOrder = async (req, res) => {
   try {
@@ -122,48 +123,36 @@ export const cancelOrder = async (req, res) => {
 }
 
 // Relatório geral de vendas
-app.get('/orders/report/:stallId', async (req, res) => {
-  const { stallId } = req.params;
-
+export const getOrdersReport = async (req, res) => {
   try {
+    // Busca todos os pedidos
     const orders = await prisma.order.findMany({
-      where: {
-        stallId: parseInt(stallId),
-        status: 'completed', // só conta pedidos finalizados
-      },
       include: {
-        products: {
-          include: { product: true },
-        },
+        items: true, // inclui os itens, se tiver relação
       },
     });
 
-    if (!orders.length) {
-      return res.json({
-        totalOrders: 0,
-        totalRevenue: 0,
-        averageOrderValue: 0,
-      });
-    }
+    // Conta pedidos por status
+    const statusCounts = Object.values(OrderStatus).reduce((acc, status) => {
+      acc[status] = orders.filter(order => order.status === status).length;
+      return acc;
+    }, {});
 
-    // soma total do faturamento
-    const totalRevenue = orders.reduce((acc, order) => {
-      const orderTotal = order.products.reduce((sum, p) => {
-        return sum + p.product.price * p.quantity;
-      }, 0);
-      return acc + orderTotal;
-    }, 0);
+    // Soma o valor total de todos os pedidos
+    const totalRevenue = orders.reduce(
+      (acc, order) => acc + (order.total || 0),
+      0
+    );
 
-    const totalOrders = orders.length;
-    const averageOrderValue = totalRevenue / totalOrders;
-
-    res.json({
-      totalOrders,
-      totalRevenue,
-      averageOrderValue,
+    // Retorna o relatório
+    return res.json({
+      totalPedidos: orders.length,
+      pedidosPorStatus: statusCounts,
+      receitaTotal: totalRevenue,
+      pedidos: orders, 
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Erro ao gerar relatório' });
+    return res.status(500).json({ error: "Erro ao gerar relatório de pedidos" });
   }
-});
+};

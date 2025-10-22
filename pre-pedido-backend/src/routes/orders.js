@@ -19,6 +19,6 @@ router.get('/history/:userId', getOrderHistory);
 router.put('/:id/cancel/', cancelOrder)
 
 // rota para o relatório de vendas
-router.get()
+router.get('/relatorio', getOrdersReport);
 
 export default router;
