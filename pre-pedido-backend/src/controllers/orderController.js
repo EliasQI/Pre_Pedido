@@ -54,16 +54,24 @@ export const updateOrder = async (req, res) => {
     const { id } = req.params;
     const { newStatus, quantity } = req.body;
 
-    // Validação dos status permitidos
-    const validStatuses = ["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELED"];
-    if (newStatus && !validStatuses.includes(newStatus)) {
+    // Tradução dos status em português → inglês
+    const statusMap = {
+      "pendente": "PENDING",
+      "em andamento": "IN_PROGRESS",
+      "concluído": "COMPLETED",
+      "cancelado": "CANCELED",
+    };
+
+    const translatedStatus = statusMap[newStatus?.toLowerCase()];
+
+    if (!translatedStatus) {
       return res.status(400).json({ error: "Status inválido!" });
     }
 
     const updatedOrder = await prisma.order.update({
       where: { id: parseInt(id) },
       data: { 
-        status: newStatus, 
+        status: translatedStatus, 
         quantity 
       },
     });
