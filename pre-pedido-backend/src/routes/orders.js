@@ -18,4 +18,7 @@ router.get('/history/:userId', getOrderHistory);
 // rota para status de pedido cancelado
 router.put('/:id/cancel/', cancelOrder)
 
+// rota para o relatório de vendas
+router.get()
+
 export default router;

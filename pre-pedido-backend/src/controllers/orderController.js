@@ -18,7 +18,8 @@ export const createOrder = async (req, res) => {
       data: {
         quantity,
         user: { connect: { id: userId } },
-        product: { connect: { id: productId } }
+        product: { connect: { id: productId } },
+        status: "PENDING"
       },
       include: {
         user: true,
@@ -50,11 +51,11 @@ export const getOrders = async (req, res) => {
 export const updateOrder = async (req, res) =>{
   try {
     const {id} = req.params;
-    const {status, quantity} = req.body;
+    const {newStatus, quantity} = req.body;
 
     const updateOrder = await prisma.order.update({
       where: {id: parseInt(id)},
-      data: {status, quantity},
+      data: {status: newStatus, quantity},
     });
 
     res.json(updateOrder);
@@ -119,3 +120,50 @@ export const cancelOrder = async (req, res) => {
     res.status(500).json({ message: 'Erro ao cancelar pedido' })
   }
 }
+
+// Relatório geral de vendas
+app.get('/orders/report/:stallId', async (req, res) => {
+  const { stallId } = req.params;
+
+  try {
+    const orders = await prisma.order.findMany({
+      where: {
+        stallId: parseInt(stallId),
+        status: 'completed', // só conta pedidos finalizados
+      },
+      include: {
+        products: {
+          include: { product: true },
+        },
+      },
+    });
+
+    if (!orders.length) {
+      return res.json({
+        totalOrders: 0,
+        totalRevenue: 0,
+        averageOrderValue: 0,
+      });
+    }
+
+    // soma total do faturamento
+    const totalRevenue = orders.reduce((acc, order) => {
+      const orderTotal = order.products.reduce((sum, p) => {
+        return sum + p.product.price * p.quantity;
+      }, 0);
+      return acc + orderTotal;
+    }, 0);
+
+    const totalOrders = orders.length;
+    const averageOrderValue = totalRevenue / totalOrders;
+
+    res.json({
+      totalOrders,
+      totalRevenue,
+      averageOrderValue,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao gerar relatório' });
+  }
+});
