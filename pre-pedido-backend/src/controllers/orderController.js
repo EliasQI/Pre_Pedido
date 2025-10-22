@@ -49,19 +49,29 @@ export const getOrders = async (req, res) => {
 };
 
 // Atualiza o Pedido
-export const updateOrder = async (req, res) =>{
+export const updateOrder = async (req, res) => {
   try {
-    const {id} = req.params;
-    const {newStatus, quantity} = req.body;
+    const { id } = req.params;
+    const { newStatus, quantity } = req.body;
 
-    const updateOrder = await prisma.order.update({
-      where: {id: parseInt(id)},
-      data: {status: newStatus, quantity},
+    // Validação dos status permitidos
+    const validStatuses = ["PENDING", "IN_PROGRESS", "COMPLETED", "CANCELED"];
+    if (newStatus && !validStatuses.includes(newStatus)) {
+      return res.status(400).json({ error: "Status inválido!" });
+    }
+
+    const updatedOrder = await prisma.order.update({
+      where: { id: parseInt(id) },
+      data: { 
+        status: newStatus, 
+        quantity 
+      },
     });
 
-    res.json(updateOrder);
-  } catch(err) {
-    res.status(500).json({error: "Erro ao atualizar o pedido"});
+    res.json(updatedOrder);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Erro ao atualizar o pedido" });
   }
 };
 
