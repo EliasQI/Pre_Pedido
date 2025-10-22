@@ -56,10 +56,10 @@ export const updateOrder = async (req, res) => {
 
     // Tradução dos status em português → inglês
     const statusMap = {
-      "pendente": "PENDING",
-      "em andamento": "IN_PROGRESS",
-      "concluído": "COMPLETED",
-      "cancelado": "CANCELED",
+      "Pendente": "PENDING",
+      "Em andamento": "IN_PROGRESS",
+      "Concluído": "COMPLETED",
+      "Cancelado": "CANCELED",
     };
 
     const translatedStatus = statusMap[newStatus?.toLowerCase()];
